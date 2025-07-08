@@ -1,0 +1,6 @@
+[
+  {"Nombre": "Agua", "Precio": 2000},
+  {"Nombre": "Limonada", "Precio": 3000},
+  {"Nombre": "Café", "Precio": 2500},
+  {"Nombre": "Cerveza", "Precio": 5000}
+]
