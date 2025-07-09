@@ -100,6 +100,51 @@ class MenusManager:
       print("Entrada invalida.")
     return False
   
+  def agregar_nuevo_item(self):
+    print("De que categoria desea agregar un item?" \
+          " (main_course, desserts, drinks)"
+          )
+    lista_nombre = input("Ingrese el nombre de la lista: ").strip()
+    if lista_nombre not in self.menu:
+      print("Nombre de lista invalido.")
+      return
+    lista = self.menu[lista_nombre]
+    print(f"items en {lista_nombre}:\n\n")
+    for numero, item in enumerate(lista):
+      print(f"{numero}. {item.Nombre}")
+    try:
+      json_file = self.menu_jsons.get(lista_nombre)
+      if json_file:
+        try:
+          with open(json_file, "r", encoding="utf-8") as c:
+            items = json.load(c)
+            nombre = input("Ingrese el nombre: ")
+            precio = float(input("Ingrese el  precio: "))
+            nuevo_item = {"Nombre": nombre, "Precio": precio}  # Claves corregidas
+            items.append(nuevo_item)
+            with open(json_file, "w", encoding="utf-8") as c:
+                json.dump(items, c, ensure_ascii=False, indent=2)
+        except Exception as error:
+          print(f"Error al actualizar el archivo JSON: {error}")
+      return True
+    except ValueError:
+      print("Entrada invalida.")
+    return False
+  
+  def revisar_jsons(self):
+    self._initialize_menus()
+    print("De que categoria desea revisar el json?" \
+          " (main_course, desserts, drinks)"
+          )
+    lista_nombre = input("Ingrese el nombre de la lista: ").strip()
+    if lista_nombre not in self.menu:
+      print("Nombre de lista invalido.")
+      return
+    lista = self.menu[lista_nombre]
+    print(f"items en {lista_nombre}:\n\n")
+    for numero, item in enumerate(lista):
+      print(f"{numero}. {item.Nombre}")
+
   def crear_objetos_menu(self):
       return (
         MainCourse("plato_principal", 0, self.menu.get("main_course")),
@@ -118,7 +163,8 @@ class MenusManager:
       print("2. Simular llegada aleatoria de clientes")
       print("3. Ver estado de la cola")
       print("4. Procesar orden de la cola")
-      print("5. Salir\n\n")
+      print("5. Agregar/eliminar/modificar items")
+      print("6. Salir\n\n")
       try:
         opcion = int(input("Seleccione una opcion: "))
       except ValueError:
@@ -165,6 +211,24 @@ class MenusManager:
         else:
           print("No hay ordenes en la cola para procesar.")
       elif opcion == 5:
+        print("que desea hacer?"\
+              "\n 1. modificar" \
+              "\n 2. agregar" \
+              "\n 3. eliminar" \
+              "\n 4. revisar jsons"
+              )
+        seleccion = int(input("ingresar opcion:"))
+        if seleccion == 1:
+          self.change_item()
+        elif seleccion == 2:
+          self.agregar_nuevo_item()
+        elif seleccion == 3:
+          self.delete_item()
+        elif seleccion == 4:
+          self.revisar_jsons()
+        else:
+          print("Opcion invalida.")
+      elif opcion == 6:
         print("Gracias por visitarnos")
         break
       else:

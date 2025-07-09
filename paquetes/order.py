@@ -74,7 +74,7 @@ class Order:
         break
       seleccion_2 = input(
         "Que le gustaria agregar a la orden? \n 1. Plato principal \n" \
-        "2. Bebida \n 3. Postre"
+        " 2. Bebida \n 3. Postre"
         " (si desea terminar la orden escriba 0) \n-->"
       )
       if seleccion_2 == "1":

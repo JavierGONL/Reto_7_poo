@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "Nombre": "hamburguesa",
+    "Precio": 10000.0
+  },
+  {
+    "Nombre": "tacos",
+    "Precio": 9000.0
+  }
+]
