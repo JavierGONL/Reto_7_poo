@@ -233,5 +233,80 @@ class TestMenusManager(unittest.TestCase):
         self.assertEqual(item['Nombre'], self.manager.menu['main_course'][idx].Nombre)
         self.assertEqual(item['Precio'], self.manager.menu['main_course'][idx].Precio)
 
+  def test_agregar_nuevo_item(self):
+    # Simular input para agregar un nuevo item a main_course
+    input_values = ['main_course', 'NuevoTest', '12345']
+    def mock_input(prompt):
+      return input_values.pop(0)
+    self.manager.agregar_nuevo_item.__globals__['input'] = mock_input
+    self.manager.agregar_nuevo_item()
+    # Verificar en memoria
+    nombres_mem = [i.Nombre for i in self.manager.menu['main_course']]
+    self.assertIn('NuevoTest', nombres_mem)
+    # Verificar en JSON
+    with open('main_course.json', 'r', encoding='utf-8') as f:
+      items = json.load(f)
+      nombres_json = [i['Nombre'] for i in items]
+      self.assertIn('NuevoTest', nombres_json)
+
+  def test_agregar_nuevo_item_potente(self):
+    # Agregar varios ítems a main_course y drinks, incluyendo duplicados
+    secuencia = [
+      ('main_course', 'NuevoTest1', '12345'),
+      ('main_course', 'NuevoTest2', '54321'),
+      ('main_course', 'NuevoTest1', '12345'),  # Duplicado
+      ('drinks', 'BebidaTest', '1111'),
+      ('drinks', 'BebidaTest', '1111'),        # Duplicado
+      ('desserts', 'PostreTest', '2222')
+    ]
+    for categoria, nombre, precio in secuencia:
+      input_values = [categoria, nombre, precio]
+      def mock_input(prompt):
+        return input_values.pop(0)
+      self.manager.agregar_nuevo_item.__globals__['input'] = mock_input
+      self.manager.agregar_nuevo_item()
+    # Verificar en memoria main_course
+    nombres_main = [i.Nombre for i in self.manager.menu['main_course']]
+    self.assertIn('NuevoTest1', nombres_main)
+    self.assertIn('NuevoTest2', nombres_main)
+    self.assertEqual(nombres_main.count('NuevoTest1'), 2)
+    # Verificar en JSON main_course
+    with open('main_course.json', 'r', encoding='utf-8') as f:
+      items = json.load(f)
+      nombres_json = [i['Nombre'] for i in items]
+      self.assertIn('NuevoTest1', nombres_json)
+      self.assertIn('NuevoTest2', nombres_json)
+      self.assertEqual(nombres_json.count('NuevoTest1'), 2)
+    # Verificar en memoria drinks
+    nombres_drinks = [i.Nombre for i in self.manager.menu['drinks']]
+    self.assertIn('BebidaTest', nombres_drinks)
+    self.assertEqual(nombres_drinks.count('BebidaTest'), 2)
+    # Verificar en JSON drinks
+    with open('drinks.json', 'r', encoding='utf-8') as f:
+      items = json.load(f)
+      nombres_json = [i['Nombre'] for i in items]
+      self.assertIn('BebidaTest', nombres_json)
+      self.assertEqual(nombres_json.count('BebidaTest'), 2)
+    # Verificar en memoria desserts
+    nombres_desserts = [i.Nombre for i in self.manager.menu['desserts']]
+    self.assertIn('PostreTest', nombres_desserts)
+    # Verificar en JSON desserts
+    with open('desserts.json', 'r', encoding='utf-8') as f:
+      items = json.load(f)
+      nombres_json = [i['Nombre'] for i in items]
+      self.assertIn('PostreTest', nombres_json)
+
+  def test_revisar_jsons(self):
+    # Simular input para revisar main_course
+    input_values = ['main_course']
+    def mock_input(prompt):
+      return input_values.pop(0)
+    self.manager.revisar_jsons.__globals__['input'] = mock_input
+    # Solo verificar que no lanza excepción y muestra los items
+    try:
+      self.manager.revisar_jsons()
+    except Exception as e:
+      self.fail(f"revisar_jsons lanzó excepción inesperada: {e}")
+
 if __name__ == "__main__":
   unittest.main()
